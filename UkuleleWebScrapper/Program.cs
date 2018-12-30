@@ -7,24 +7,39 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;
 using System.Net;
 
-namespace UkuleleWebScrapper
+namespace WebScrapper
 {
 	class Program
 	{
 		static void Main(string[] args)
 		{
+			//TODO: async this console application to allow for multiple instances to run independently
+			//TODO: Fill search options from args (will be retrieved from the gui)
+			//Retrieve page arguments for search
+			SearchOptions searchOptions = new SearchOptions();
+			searchOptions.Category = DataHandler.Enums.Enums.EnumCategory.sss;
+			searchOptions.Condition = new List<DataHandler.Enums.Enums.EnumCondition>() { DataHandler.Enums.Enums.EnumCondition.excellent, DataHandler.Enums.Enums.EnumCondition.brandnew, DataHandler.Enums.Enums.EnumCondition.excellent };
+			searchOptions.MaxPrice = "1000";
+			searchOptions.MinPrice = "10";
+			searchOptions.SearchDistance = "200";
+			searchOptions.SearchZip = "04957";
+			searchOptions.State = "maine";
+			searchOptions.Search = "mountain bike";
 
-			loadPage();
+			//Create URL
+			string url = createURL(searchOptions);
+			if (string.IsNullOrEmpty(url)) { throw new NullReferenceException("No url to perform search on"); }
+
+			//Load Settings
+			loadSettings();
+
+			//Load Page & run scrapper
+			loadPage(url, searchOptions.Search);
 		}
 
-		private static void loadPage()
+		
+		private static void loadSettings()
 		{
-			string path = ".../.../Data/UkuleleData_"+ DateTime.Now.ToString("MMDDYYYYhhmmss") +".csv";
-			Directory.CreateDirectory(Path.GetDirectoryName(path));
-			System.IO.StreamWriter sw = new System.IO.StreamWriter(path);
-
-			//Allow Https sites to be loaded into html agility pack
-			WebClient client = new WebClient();
 			HtmlWeb web = new HtmlWeb()
 			{
 				PreRequest = request =>
@@ -35,50 +50,104 @@ namespace UkuleleWebScrapper
 					return true;
 				}
 			};
+		}
+
+		private static void loadPage(string pageURL, string searchKey)
+		{
+
+			//Allow Https sites to be loaded into html agility pack
+			WebClient client = new WebClient();
 
 
-			//Scrape Page for ukulele data
+			//Scrape Page for Ukulele data
 			int pageCount = 1; //Total items divided by items per page is the page count
 			int pageCounter = 1;
 			double totalItems = 0;
-			int itemsPerPage = 90;
+			int itemsPerPage = 120;
+
+			Console.WriteLine("Starting Scrapper");
 			do
 			{
-				//string url = "https://www.guitarcenter.com/Ukuleles.gc#pageName=subcategory-page&N=19556&Nao=90&recsPerPage=90&postalCode=04957&radius=100&profileCountryCode=US&profileCurrencyCode=USD";
-				string formattedURL = "https://www.guitarcenter.com/Ukuleles.gc#pageName=subcategory-page&N=19556&Nao=" + (itemsPerPage * (pageCounter - 1)).ToString() + "&recsPerPage=" + itemsPerPage.ToString() + "&postalCode=04957&radius=100&profileCountryCode=US&profileCurrencyCode=USD";
-				Uri myUri = new Uri(formattedURL, UriKind.Absolute);
-				
-				//HtmlDocument document = web.Load(doc);
+				Console.WriteLine("Scraping Page: " + pageCounter + "/" + pageCount);
 
+				Uri myUri = new Uri(pageURL, UriKind.Absolute);
 				HtmlDocument document = new HtmlDocument();
 				document.LoadHtml(client.DownloadString(myUri));
-				Console.WriteLine("Starting Scrapper");
-				if (pageCounter == 1)
+
+				//Set page count
+				if (pageCounter == 1 && document.DocumentNode.SelectSingleNode("//*[@class=\"button pagenum\"]").ChildNodes.Count > 1)
 				{
-					string strTotalItems = document.DocumentNode.SelectSingleNode("//*[@class=\"searchTotalResults\"]/text()").InnerText;
+					string strTotalItems = document.DocumentNode.SelectSingleNode("//*[@class=\"button pagenum\"]/span[@class=\"totalcount\"]").InnerText.Trim();
 					if (!double.TryParse(strTotalItems, out totalItems)) throw new Exception("Unable to parse page count into int");
 					pageCount = (int)Math.Ceiling((totalItems / itemsPerPage));
 				}
-				HtmlNodeCollection resultsContentListItems = document.DocumentNode.SelectNodes("//*[@id=\"resultsContent\"]/div/ol/li");
+
+				//Parse Document info
+				HtmlNodeCollection resultsContentListItems = document.DocumentNode.SelectNodes("//*[@id=\"sortable-results\"]/ul/li");
 				int listItemCount = resultsContentListItems.Count;
-				for(int li = 0; li < listItemCount; li++)
+				for (int li = 0; li < listItemCount; li++)
 				{
-					//Save data to csv file
-					string ukeID = resultsContentListItems[li].SelectSingleNode("descendant::var[contains(@class, 'hidden productId')]/text()[normalize-space()]").InnerText.Replace("\n", "");
-					string ukeDesc = resultsContentListItems[li].SelectSingleNode("descendant::div[contains(@class, 'productTitle')]/a/text()[normalize-space()]").InnerText.Replace("\n", "");
-					string ukePrice = resultsContentListItems[li].SelectSingleNode("descendant::div[contains(@class, 'priceContainer mainPrice')]/span/text()[normalize-space()]").InnerText.Replace("\n", "");
-					Console.WriteLine("DataScrape: " + ukeID + "," + ukeDesc + "," + ukePrice);
-					sw.WriteLine(ukeID + "," + ukeDesc + "," + ukePrice);
-					
+					//Fill Model
+					Information itemInfo = new Information();
+					itemInfo.ID = resultsContentListItems[li].GetAttributeValue("data-pid", "missing");
+					itemInfo.Description = resultsContentListItems[li].SelectSingleNode("descendant::a[contains(@class, 'result-title hdrlnk')]/text()").InnerText.Trim();
+					HtmlNodeCollection purchaseLocations = resultsContentListItems[li].SelectNodes("descendant::span[contains(@class, 'result-hood') or contains(@class, 'nearby')]/text()");
+					itemInfo.PurchaseLocation = purchaseLocations[0].InnerText.Trim();
+					string strPrice = resultsContentListItems[li].SelectSingleNode("descendant::span[contains(@class, 'result-price')]/text()").InnerText.Trim().Replace("$","");
+					double dblPrice;
+					if (!double.TryParse(strPrice, out dblPrice)) { throw new Exception("Unable to parse double"); }
+					itemInfo.Price = dblPrice;
+					itemInfo.SearchKey = searchKey;
+					Console.WriteLine("DataScrape: " + itemInfo.ID + "," + itemInfo.Description + "," + itemInfo.Price + "," + itemInfo.PurchaseLocation);
+
+					//Write to database
+					DataHandler.Oracle database = new DataHandler.Oracle();
+					database.writeItemsToDatabase(itemInfo);
 				}
 				pageCounter++;
+				pageURL = nextPageURL(pageURL, itemsPerPage, pageCounter);
 
 			} while (pageCounter <= pageCount);
 
 			Console.WriteLine("Closing Scrapper");
-			sw.Close();
 			
 		}
 
+		private static string createURL(DataHandler.Interface.ISearchOptions searchOptions)
+		{
+			//TODO: Put url template in app settings
+			string formattedSearchURL = String.Format("https://{0}.craigslist.org/search/{1}?query={2}", searchOptions.State, searchOptions.Category.ToString(), searchOptions.Search);
+			if (!string.IsNullOrEmpty(searchOptions.SearchDistance))
+			{
+				formattedSearchURL = formattedSearchURL + "&search_distance=" + searchOptions.SearchDistance;
+			}
+			if (!string.IsNullOrEmpty(searchOptions.SearchZip))
+			{
+				formattedSearchURL = formattedSearchURL + "&postal=" + searchOptions.SearchZip;
+			}
+			if (!string.IsNullOrEmpty(searchOptions.MinPrice))
+			{
+				formattedSearchURL = formattedSearchURL + "&min_price=" + searchOptions.MinPrice;
+			}
+			if (!string.IsNullOrEmpty(searchOptions.MaxPrice))
+			{
+				formattedSearchURL = formattedSearchURL + "&max_price=" + searchOptions.MaxPrice;
+			}
+			foreach (DataHandler.Enums.Enums.EnumCondition condition in searchOptions.Condition)
+			{
+				formattedSearchURL = formattedSearchURL + "&condition=" + (int)condition;
+			}
+
+			return formattedSearchURL;
+		}
+
+		private static string nextPageURL(string url, int itemsPerPage, int pageCounter)
+		{
+			if (string.IsNullOrEmpty(url))
+			{
+				throw new NullReferenceException("url is empty");
+			}
+			return url + "&s="+(itemsPerPage*(pageCounter-1));
+		}
 	}
 }
