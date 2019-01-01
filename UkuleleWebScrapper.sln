@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScrapper", "UkuleleWebScrapper\WebScrapper.csproj", "{2FC6B557-44E9-4CAD-BAF8-3B1A51B4A6A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScrapper", "WebScrapper\WebScrapper.csproj", "{2FC6B557-44E9-4CAD-BAF8-3B1A51B4A6A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraigslistScrapperGUI", "CraigslistScrapper\CraigslistScrapperGUI.csproj", "{640231E7-1FDB-492E-B4C6-1824AFBA2C08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraigslistScrapperGUI", "CraigslistScrapperGUI\CraigslistScrapperGUI.csproj", "{640231E7-1FDB-492E-B4C6-1824AFBA2C08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataHandler", "DataHandler\DataHandler.csproj", "{BD366DFA-D93A-41F8-8953-B15523038D7B}"
 EndProject

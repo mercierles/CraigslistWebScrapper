@@ -9,7 +9,7 @@ namespace DataHandler.Interface
 {
 	public interface ISearchOptions
 	{
-		string State { get; set; }
+		string URL { get; set; }
 		EnumCategory Category { get; set; }
 		string Search { get; set; }
 		List<EnumCondition> Condition { get; set; }
