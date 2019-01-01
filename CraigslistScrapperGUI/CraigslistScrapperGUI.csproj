@@ -61,16 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Scrapper.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Scrapper.Designer.cs">
+      <DependentUpon>Scrapper.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Scrapper.resx">
+      <DependentUpon>Scrapper.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -108,7 +108,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UkuleleWebScrapper\WebScrapper.csproj">
+    <ProjectReference Include="..\DataHandler\DataHandler.csproj">
+      <Project>{bd366dfa-d93a-41f8-8953-b15523038d7b}</Project>
+      <Name>DataHandler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebScrapper\WebScrapper.csproj">
       <Project>{2fc6b557-44e9-4cad-baf8-3b1a51b4a6a4}</Project>
       <Name>WebScrapper</Name>
     </ProjectReference>
