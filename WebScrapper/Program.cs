@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;
 using System.Net;
 using System.Diagnostics;
+using DataHandler.Interface;
 
 namespace WebScrapper
 {
@@ -14,22 +15,18 @@ namespace WebScrapper
 	{
 		static void Main(string[] args)
 		{
-			
-			//TODO: async this console application to allow for multiple instances to run independently
-			//TODO: Fill search options from args (will be retrieved from the gui)
 			//Retrieve page arguments for search
 			SearchOptions searchOptions = new SearchOptions(args);
 
-
 			//Create URL
 			string url = createURL(searchOptions);
-			if (string.IsNullOrEmpty(url)) { throw new NullReferenceException("No url to perform search on"); }
+			if (string.IsNullOrEmpty(url)) { throw new NullReferenceException("No url to perform the search on"); }
 
 			//Load Settings
 			loadSettings();
 
 			//Load Page & run scrapper
-			loadPage(url, searchOptions.Search);
+			loadPage(url, searchOptions);
 		}
 
 		
@@ -47,36 +44,34 @@ namespace WebScrapper
 			};
 		}
 
-		private static void loadPage(string pageURL, string searchKey)
+		private static void loadPage(string pageURL, ISearchOptions searchOptions)
 		{
 
 			//Allow Https sites to be loaded into html agility pack
 			WebClient client = new WebClient();
 
-
-			//Scrape Page for Ukulele data
-			int itemCount = 1;
+			//Scrape Page for Item Data
 			int pageCount = 1; //Total items divided by items per page is the page count
 			int pageCounter = 1;
-			double totalItems = 0;
+			int itemCount = 1;
+			double totalItems = 0; //Fill total items after loading in document
 			int itemsPerPage = 120;
 
 			Console.WriteLine("Starting Scrapper");
+			//if (!Debugger.IsAttached)
+			//	Debugger.Launch();
+
+			DataHandler.DatabaseHandler dataBaseHandler = new DataHandler.DatabaseHandler(searchOptions.DBType);
 			do
 			{
-				Console.WriteLine("Scraping Page: " + pageCounter + "/" + pageCount);
-
 				Uri myUri = new Uri(pageURL, UriKind.Absolute);
 				HtmlDocument document = new HtmlDocument();
 				document.LoadHtml(client.DownloadString(myUri));
 
-				//Set page count
-				if (pageCounter == 1 && document.DocumentNode.SelectSingleNode("//*[@class=\"button pagenum\"]").ChildNodes.Count > 1)
-				{
-					string strTotalItems = document.DocumentNode.SelectSingleNode("//*[@class=\"button pagenum\"]/span[@class=\"totalcount\"]").InnerText.Trim();
-					if (!double.TryParse(strTotalItems, out totalItems)) throw new Exception("Unable to parse page count into int");
-					pageCount = (int)Math.Ceiling((totalItems / itemsPerPage));
-				}
+				//Get # of pages (on first page)
+				if (pageCounter == 1) { pageCount = GetNumberOfPages(document, itemsPerPage);}
+				Console.WriteLine("Scraping Page: " + pageCounter + "/" + pageCount);
+
 
 				//Parse Document info
 				HtmlNodeCollection resultsContentListItems = document.DocumentNode.SelectNodes("//*[@id=\"sortable-results\"]/ul/li");
@@ -96,26 +91,41 @@ namespace WebScrapper
 					double dblPrice;
 					if (!double.TryParse(strPrice, out dblPrice)) { throw new Exception("Unable to parse double"); }
 					itemInfo.Price = dblPrice;
-					itemInfo.SearchKey = searchKey;
-					Console.WriteLine("DataScrape Item(" + itemCount + "\\" + totalItems+ "): " + itemInfo.ID + "," + itemInfo.Description + "," + itemInfo.Price + "," + itemInfo.PurchaseLocation + "," + searchKey);
+					itemInfo.SearchKey = searchOptions.Search;
 
-					//Write to database
-					DataHandler.Oracle database = new DataHandler.Oracle();
-					database.writeItemsToDatabase(itemInfo);
+					Console.WriteLine("DataScrape Item(" + itemCount + "\\" + totalItems+ "): " + itemInfo.ID + "," + itemInfo.Description + "," + itemInfo.Price + "," + itemInfo.PurchaseLocation + "," + searchOptions.Search);
+
+					//Write to database 					
+					dataBaseHandler.database.addItemsToTable(itemInfo);
 					itemCount++;
 				}
 				pageCounter++;
 				pageURL = nextPageURL(pageURL, itemsPerPage, pageCounter);
+				//Finalize writing items to database for page scrapped
+				dataBaseHandler.database.submitItemsToDatabase();
 
 			} while (pageCounter <= pageCount);
+
 
 			Console.WriteLine("Closing Scrapper");
 			
 		}
 
+		private static int GetNumberOfPages(HtmlDocument document, int itemsPerPage)
+		{
+			//Set page count
+			if (document.DocumentNode.SelectSingleNode("//*[@class=\"button pagenum\"]").ChildNodes.Count >= 1)
+			{
+				double totalItems = 0;
+				string strTotalItems = document.DocumentNode.SelectSingleNode("//*[@class=\"button pagenum\"]/span[@class=\"totalcount\"]").InnerText.Trim();
+				if (!double.TryParse(strTotalItems, out totalItems)) throw new Exception("Unable to parse page count into int");
+				return (int)Math.Ceiling((totalItems / itemsPerPage));
+			}
+			return 1;
+		}
+
 		private static string createURL(DataHandler.Interface.ISearchOptions searchOptions)
 		{
-			//TODO: Put url template in app settings
 			string formattedSearchURL = String.Format("{0}search/{1}?", searchOptions.URL, Enum.GetName(typeof(DataHandler.Enums.Enums.EnumCategory),searchOptions.Category));
 			if (!string.IsNullOrEmpty(searchOptions.Search)){
 				formattedSearchURL = formattedSearchURL + "query=" + searchOptions.Search +"&";
@@ -141,11 +151,6 @@ namespace WebScrapper
 				formattedSearchURL = formattedSearchURL + "condition=" + (int)condition + "&";
 			}
 			formattedSearchURL = formattedSearchURL.TrimEnd('&');
-			//https://maine.craigslist.org/search/ata?search_distance=1&min_price=1&max_price=1000&condition=10&condition=20&condition=30&condition=40
-			//https://maine.craigslist.org/search/sss?query=ukulele&search_distance=1&min_price=1&max_price=1000&condition=10&condition=20&condition=30&condition=40
-			//https://maine.craigslist.org//search/0?query=''&search_distance=1&postal=''&min_price=0&max_price=100000&condition=10&condition=20&condition=30&condition=40&condition=50&condition=60
-			//if (!Debugger.IsAttached)
-			//	Debugger.Launch();
 
 			return formattedSearchURL;
 		}

@@ -21,6 +21,7 @@ namespace WebScrapper
 		public string MaxPrice { get; set; }
 		public string SearchDistance { get; set; }
 		public string SearchZip { get; set; }
+		public Enums.EnumDatabaseType DBType { get; set; }
 
 		public SearchOptions(string[] args)
 		{
@@ -40,12 +41,19 @@ namespace WebScrapper
 			if (!string.IsNullOrEmpty(args[4])) { MaxPrice = args[4]; }
 			if (!string.IsNullOrEmpty(args[5])) { SearchZip = args[5]; }
 			if (!string.IsNullOrEmpty(args[6])) { SearchDistance = args[6]; }
-
+			if (!string.IsNullOrEmpty(args[7]))
+			{
+				Enums.EnumDatabaseType dbType;
+				if (Enum.TryParse(args[7], out dbType))
+				{
+					DBType = dbType;
+				}
+			}
 			if (Condition == null) { Condition = new List<Enums.EnumCondition>(); }
-			int argCounter = 7;
+			int argCounter = 8;
 			do
 			{
-				if (args.Count() > 7 && !string.IsNullOrEmpty(args[7]))
+				if (args.Count() > 8 && !string.IsNullOrEmpty(args[8]))
 				{
 					Enums.EnumCondition enumCondition;
 					if (Enum.TryParse(args[argCounter], out enumCondition))
@@ -68,7 +76,5 @@ namespace WebScrapper
 			URL = "https://maine.craigslist.org/";
 			Search = "";
 		}
-
-		//https://maine.craigslist.org/search/ppa?query=car&search_distance=200&postal=04957&min_price=10&max_price=1000&condition=10&condition=20&condition=30
 	}
 }

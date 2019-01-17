@@ -45,6 +45,8 @@
 			this.upDwnRadius = new System.Windows.Forms.NumericUpDown();
 			this.upDwnMaxPrice = new System.Windows.Forms.NumericUpDown();
 			this.upDwnMinPrice = new System.Windows.Forms.NumericUpDown();
+			this.ddlHowToSave = new System.Windows.Forms.ComboBox();
+			this.lblHowToSave = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.upDwnRadius)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.upDwnMaxPrice)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.upDwnMinPrice)).BeginInit();
@@ -54,7 +56,7 @@
 			// 
 			this.chkBoxCondition.CheckOnClick = true;
 			this.chkBoxCondition.FormattingEnabled = true;
-			this.chkBoxCondition.Location = new System.Drawing.Point(15, 94);
+			this.chkBoxCondition.Location = new System.Drawing.Point(15, 113);
 			this.chkBoxCondition.Name = "chkBoxCondition";
 			this.chkBoxCondition.Size = new System.Drawing.Size(121, 94);
 			this.chkBoxCondition.TabIndex = 0;
@@ -63,7 +65,7 @@
 			// lblCondition
 			// 
 			this.lblCondition.AutoSize = true;
-			this.lblCondition.Location = new System.Drawing.Point(31, 78);
+			this.lblCondition.Location = new System.Drawing.Point(31, 97);
 			this.lblCondition.Name = "lblCondition";
 			this.lblCondition.Size = new System.Drawing.Size(84, 13);
 			this.lblCondition.TabIndex = 1;
@@ -90,7 +92,7 @@
 			// lblMinPrice
 			// 
 			this.lblMinPrice.AutoSize = true;
-			this.lblMinPrice.Location = new System.Drawing.Point(154, 94);
+			this.lblMinPrice.Location = new System.Drawing.Point(154, 113);
 			this.lblMinPrice.Name = "lblMinPrice";
 			this.lblMinPrice.Size = new System.Drawing.Size(78, 13);
 			this.lblMinPrice.TabIndex = 5;
@@ -99,7 +101,7 @@
 			// lblMaxPrice
 			// 
 			this.lblMaxPrice.AutoSize = true;
-			this.lblMaxPrice.Location = new System.Drawing.Point(154, 120);
+			this.lblMaxPrice.Location = new System.Drawing.Point(154, 139);
 			this.lblMaxPrice.Name = "lblMaxPrice";
 			this.lblMaxPrice.Size = new System.Drawing.Size(81, 13);
 			this.lblMaxPrice.TabIndex = 7;
@@ -108,7 +110,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(154, 172);
+			this.label1.Location = new System.Drawing.Point(154, 191);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(113, 13);
 			this.label1.TabIndex = 11;
@@ -117,7 +119,7 @@
 			// lblZipCode
 			// 
 			this.lblZipCode.AutoSize = true;
-			this.lblZipCode.Location = new System.Drawing.Point(154, 146);
+			this.lblZipCode.Location = new System.Drawing.Point(154, 165);
 			this.lblZipCode.Name = "lblZipCode";
 			this.lblZipCode.Size = new System.Drawing.Size(53, 13);
 			this.lblZipCode.TabIndex = 9;
@@ -125,7 +127,7 @@
 			// 
 			// txtBoxZipCode
 			// 
-			this.txtBoxZipCode.Location = new System.Drawing.Point(273, 143);
+			this.txtBoxZipCode.Location = new System.Drawing.Point(273, 162);
 			this.txtBoxZipCode.MaxLength = 5;
 			this.txtBoxZipCode.Name = "txtBoxZipCode";
 			this.txtBoxZipCode.Size = new System.Drawing.Size(210, 20);
@@ -159,7 +161,7 @@
 			// 
 			// btnSearch
 			// 
-			this.btnSearch.Location = new System.Drawing.Point(15, 195);
+			this.btnSearch.Location = new System.Drawing.Point(15, 214);
 			this.btnSearch.Name = "btnSearch";
 			this.btnSearch.Size = new System.Drawing.Size(468, 23);
 			this.btnSearch.TabIndex = 18;
@@ -177,7 +179,7 @@
 			// 
 			// upDwnRadius
 			// 
-			this.upDwnRadius.Location = new System.Drawing.Point(273, 168);
+			this.upDwnRadius.Location = new System.Drawing.Point(273, 187);
 			this.upDwnRadius.Maximum = new decimal(new int[] {
             200,
             0,
@@ -199,7 +201,7 @@
 			// 
 			// upDwnMaxPrice
 			// 
-			this.upDwnMaxPrice.Location = new System.Drawing.Point(273, 117);
+			this.upDwnMaxPrice.Location = new System.Drawing.Point(273, 136);
 			this.upDwnMaxPrice.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -216,7 +218,7 @@
 			// 
 			// upDwnMinPrice
 			// 
-			this.upDwnMinPrice.Location = new System.Drawing.Point(273, 87);
+			this.upDwnMinPrice.Location = new System.Drawing.Point(273, 106);
 			this.upDwnMinPrice.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -226,11 +228,30 @@
 			this.upDwnMinPrice.Size = new System.Drawing.Size(210, 20);
 			this.upDwnMinPrice.TabIndex = 23;
 			// 
+			// ddlHowToSave
+			// 
+			this.ddlHowToSave.FormattingEnabled = true;
+			this.ddlHowToSave.Location = new System.Drawing.Point(92, 67);
+			this.ddlHowToSave.Name = "ddlHowToSave";
+			this.ddlHowToSave.Size = new System.Drawing.Size(140, 21);
+			this.ddlHowToSave.TabIndex = 25;
+			// 
+			// lblHowToSave
+			// 
+			this.lblHowToSave.AutoSize = true;
+			this.lblHowToSave.Location = new System.Drawing.Point(12, 70);
+			this.lblHowToSave.Name = "lblHowToSave";
+			this.lblHowToSave.Size = new System.Drawing.Size(76, 13);
+			this.lblHowToSave.TabIndex = 24;
+			this.lblHowToSave.Text = "How To Save:";
+			// 
 			// frmScrapper
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(489, 223);
+			this.ClientSize = new System.Drawing.Size(489, 252);
+			this.Controls.Add(this.ddlHowToSave);
+			this.Controls.Add(this.lblHowToSave);
 			this.Controls.Add(this.upDwnMinPrice);
 			this.Controls.Add(this.upDwnMaxPrice);
 			this.Controls.Add(this.upDwnRadius);
@@ -277,6 +298,8 @@
 		private System.Windows.Forms.NumericUpDown upDwnRadius;
 		private System.Windows.Forms.NumericUpDown upDwnMaxPrice;
 		private System.Windows.Forms.NumericUpDown upDwnMinPrice;
+		private System.Windows.Forms.ComboBox ddlHowToSave;
+		private System.Windows.Forms.Label lblHowToSave;
 	}
 }
 

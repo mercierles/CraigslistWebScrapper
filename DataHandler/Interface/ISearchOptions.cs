@@ -17,8 +17,6 @@ namespace DataHandler.Interface
 		string MaxPrice { get; set; }
 		string SearchDistance { get; set; }
 		string SearchZip { get; set; }
-
-
-		//https://maine.craigslist.org/search/ppa?query=car&search_distance=200&postal=04957&min_price=10&max_price=1000&condition=10&condition=20&condition=30
+		EnumDatabaseType DBType { get; set; }
 	}
 }

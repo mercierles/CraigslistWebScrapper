@@ -226,7 +226,14 @@ namespace DataHandler.Enums
 			WY = 50
 		}
 
-		//Code snippit to get description https://codereview.stackexchange.com/questions/157871/method-that-returns-description-attribute-of-enum-value
+		public enum EnumDatabaseType
+		{
+			[Description("Comma Seperated File")]
+			CSV = 1,
+			[Description("Oracle Database")]
+			ORACLE = 2
+		}
+		//Code to get description courtesy of https://codereview.stackexchange.com/questions/157871/method-that-returns-description-attribute-of-enum-value
 		public static string GetDescription(Enum value)
 		{
 			return

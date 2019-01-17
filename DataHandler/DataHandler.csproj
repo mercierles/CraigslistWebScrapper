@@ -44,11 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Databases\CraigslistDataTable.cs" />
     <Compile Include="Databases\CSV.cs" />
+    <Compile Include="DatabaseHandler.cs" />
     <Compile Include="Enums\Enums.cs" />
+    <Compile Include="Interface\IDatabase.cs" />
     <Compile Include="Interface\IItemInformation.cs" />
     <Compile Include="Interface\ISearchOptions.cs" />
-    <Compile Include="Databases\Oracle.cs" />
+    <Compile Include="Databases\OracleDB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
