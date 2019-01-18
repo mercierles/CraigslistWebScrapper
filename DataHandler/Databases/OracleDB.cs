@@ -16,8 +16,6 @@ namespace DataHandler
     {
 		private CraigslistDataTable CDT = new CraigslistDataTable();
 
-		private const string CONNECTIONSTRING = "User Id=system; password=Password1;Data Source=localhost:1521/DB1; Pooling=false;";
-
 		public OracleDB(){}
 
 		public void addItemsToTable(IItemInformation itemInfo)
@@ -39,7 +37,7 @@ namespace DataHandler
 		{
 			try
 			{
-				using (var connection = new OracleConnection(CONNECTIONSTRING))
+				using (var connection = new OracleConnection(System.Configuration.ConfigurationManager.AppSettings["connectionString"].ToString()))
 				{
 					connection.Open();
 					StoreDataInTempTable(connection);

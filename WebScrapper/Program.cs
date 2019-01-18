@@ -58,8 +58,6 @@ namespace WebScrapper
 			int itemsPerPage = 120;
 
 			Console.WriteLine("Starting Scrapper");
-			//if (!Debugger.IsAttached)
-			//	Debugger.Launch();
 
 			DataHandler.DatabaseHandler dataBaseHandler = new DataHandler.DatabaseHandler(searchOptions.DBType);
 			do
@@ -108,7 +106,7 @@ namespace WebScrapper
 
 
 			Console.WriteLine("Closing Scrapper");
-			
+
 		}
 
 		private static int GetNumberOfPages(HtmlDocument document, int itemsPerPage)
