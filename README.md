@@ -1,3 +1,5 @@
+# DEPRICATED
+
 # CraigslistWebScrapper
 Tool to scrape data from craigslist based on any searched item and store in a DB for consumption
 
